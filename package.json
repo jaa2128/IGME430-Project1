@@ -1,10 +1,11 @@
 {
   "name": "http-api-assignment-ii",
   "version": "1.0.0",
-  "main": "eslint.config.js",
+  "main": "./src/server.js",
   "scripts": {
     "start": "node ./src/server.js",
     "pretest": "eslint ./src --fix",
+    "nodemon": "nodemon -e js,html,css --watch ./src",
     "test": "echo \"No Tests\""
   },
   "author": "Julian Alvia",
@@ -14,6 +15,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.0.0",
-    "globals": "^17.3.0"
+    "globals": "^17.3.0",
+    "nodemon": "^3.1.11"
   }
 }

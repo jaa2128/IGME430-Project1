@@ -1,5 +1,6 @@
-// object to contain user objects
-const users = {};
+const fs = require('fs');
+const rawData = fs.readFileSync(`${__dirname}/../src/books.json`);
+const books = JSON.parse(rawData);
 
 // error messages
 const responses = {
@@ -35,16 +36,34 @@ const respondJSON = (request, response, status, object) => {
     response.end();
 }
 
-// return user object as JSON
-const getUsers = (request, response) => {
-    respondJSON(request, response, 200, users);
+// return all books object as JSON
+const getallBooks = (request, response) => {
+    respondJSON(request, response, 200, books);
+}
+
+const getBookTitles = (request, response) => {
+    // TODO: send back a JSON response with all Book Titles
+
+    // TODO: be able to filter based of language or genre
+}
+
+const getBooks = (request, response) => {
+    // TODO: send back JSON response with all books if there are no params
+
+    // TODO: send back JSON response with all books filtered by country, language, and genre
+}
+
+const getBook = (request, response) => {
+    // TODO: send back book based on title, 400 status if no title is provided
 }
 
 const notFound = (request, response) => {
     respondJSON(request, response, 404, responses['notFound']);
 }
 
-const addUsers = (request, response) => {
+// TODO: change following function to add Books to the Books data set
+// TODO: must include following params: author, country, language, pages, title, year, and genres
+const addBook = (request, response) => {
     let isNewUserCreated = false;
 
     // use JS destructing to easily grab request's body
@@ -56,9 +75,9 @@ const addUsers = (request, response) => {
     }
 
     // check if the user exists, if it doesn't, create new user
-    if(!users[name]){
+    if(!books[name]){
 
-        users[name] = {
+        books[name] = {
             name: name,
         };
 
@@ -67,7 +86,7 @@ const addUsers = (request, response) => {
     }
 
     // add or update age for this user name
-    users[name].age = age;
+    books[name].age = age;
 
     // If a new user was created send 201 response
     if(isNewUserCreated){
@@ -78,8 +97,17 @@ const addUsers = (request, response) => {
     return respondJSON(request, response, 204, {});
 }
 
+
+const rateBook = (request, response) => {
+    // TODO: update an existing book to have a rating based off request
+}
+
 module.exports = {
-    getUsers,
+    getBookTitles,
+    getBooks,
+    getBook,
+    rateBook,
+    getallBooks,
     notFound,
-    addUsers
+    addBook
 }
