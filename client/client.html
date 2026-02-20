@@ -87,6 +87,8 @@
       const url = userForm.querySelector('#urlField').value;
       const method = userForm.querySelector('#methodSelect').value;
 
+      
+
       // Await the fetch response using the URL and correct request method
       // Accept headers only support JSON
       const response = await fetch(url, {
@@ -105,10 +107,11 @@
       // grab the forms
       const userForm = document.querySelector('#userForm');
       const nameForm = document.querySelector('#nameForm');
+      const bookTitlesForm = document.querySelector('#bookTitlesForm');
 
       // Function to handle request for user form
       // also cancels built in html form action
-      const getUsers = (e) => {
+      const getRequest = (e) => {
         e.preventDefault();
         requestUpdate(userForm);
         return false;
@@ -121,8 +124,11 @@
         return false;
       }
 
+
+
       // Call respective functions for each form
-      userForm.addEventListener('submit', getUsers);
+      userForm.addEventListener('submit', getRequest);
+      bookTitlesForm.addEventListener('submit', getRequest);
       nameForm.addEventListener('submit', addUser);
     };
 
@@ -154,6 +160,13 @@
       </select>
       <input type="submit" value="Get User" />
     </form>
+    <form id="bookTitlesForm" action="/getBookTitles" method="get">
+      <label for="language">Language: </label>
+      <input id="languageField" type="text" language="language"/>
+      <label for="genre">Genre: </label>
+      <input id="genreField" type="text" language="genre"/>
+      <input type="submit" value="Send Request" />
+    </form> 
   </section>
   <section id="content">
   </section>

@@ -14,6 +14,7 @@ const urlStruct ={
     '/': htmlHandler.getIndex,
     '/style.css': htmlHandler.getCss,
     '/getAllBooks': respondHandler.getallBooks,
+    '/getBookTitles': respondHandler.getBookTitles,
     '/notReal': respondHandler.notFound,
     '/addBook': respondHandler.addBook,
     notFound: respondHandler.notFound

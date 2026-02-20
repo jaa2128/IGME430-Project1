@@ -42,20 +42,37 @@ const getallBooks = (request, response) => {
 }
 
 const getBookTitles = (request, response) => {
-    // TODO: send back a JSON response with all Book Titles
+    // Build the array with all book titles
+    let titlesJSON = [];
 
+    // If there is no query
+    if(!request.query){
+
+        // Add each book title to the array
+        books.forEach(book => {
+            titlesJSON.push(book.title);
+        });
+    }
+    
     // TODO: be able to filter based of language or genre
+    //
+
+    // return this response:
+    respondJSON(request, response, 200, titlesJSON);
+
+
+    
 }
 
-const getBooks = (request, response) => {
-    // TODO: send back JSON response with all books if there are no params
+// const getBooks = (request, response) => {
+//     // TODO: send back JSON response with all books if there are no params
 
-    // TODO: send back JSON response with all books filtered by country, language, and genre
-}
+//     // TODO: send back JSON response with all books filtered by country, language, and genre
+// }
 
-const getBook = (request, response) => {
-    // TODO: send back book based on title, 400 status if no title is provided
-}
+// const getBook = (request, response) => {
+//     // TODO: send back book based on title, 400 status if no title is provided
+// }
 
 const notFound = (request, response) => {
     respondJSON(request, response, 404, responses['notFound']);
@@ -98,15 +115,15 @@ const addBook = (request, response) => {
 }
 
 
-const rateBook = (request, response) => {
-    // TODO: update an existing book to have a rating based off request
-}
+// const rateBook = (request, response) => {
+//     // TODO: update an existing book to have a rating based off request
+// }
 
 module.exports = {
     getBookTitles,
-    getBooks,
-    getBook,
-    rateBook,
+   // getBooks,
+    //getBook,
+    //rateBook,
     getallBooks,
     notFound,
     addBook
