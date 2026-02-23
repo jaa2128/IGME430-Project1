@@ -79,6 +79,7 @@
 
         // if the input's name is the same as the allowed arrayFields
         if (arrayField.includes(input.name)) {
+          
           // create the array field splitting by commas
           formDataObj[input.name] = value.split(',')
             .map(value => value.trim()) // trims values with spaces after split
@@ -117,7 +118,7 @@
 
       url = (form.querySelector('#urlField')) ? form.querySelector('#urlField').value : form.getAttribute('action');
 
-      method = (form.querySelector('#methodSelect')) ? form.querySelector('#methodSelect').value : form.getAttribute('method');
+      method = form.querySelector('.methodSelect').value;
 
       // based on the form get all it's text input values to use for url
       const inputs = form.querySelectorAll('input[type="text"]');
@@ -165,6 +166,7 @@
       const bookForm = document.querySelector('#bookForm');
       const newBookForm = document.querySelector('#newBookForm');
       const rateBookForm = document.querySelector('#rateBookForm');
+      const allBooksForm = document.querySelector('#allBooksForm');
 
       // Function to handle request for user form
       // also cancels built in html form action
@@ -187,6 +189,7 @@
       bookTitlesForm.addEventListener('submit', getRequest);
       booksForm.addEventListener('submit', getRequest);
       bookForm.addEventListener('submit', getRequest);
+      allBooksForm.addEventListener('submit', getRequest);
       newBookForm.addEventListener('submit', postRequest);
       rateBookForm.addEventListener('submit', postRequest);
 
@@ -206,6 +209,10 @@
       <input id="languageField" type="text" name="language" />
       <label for="genre">Genre: </label>
       <input id="genreField" type="text" name="genre" />
+      <select class="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
       <input type="submit" value="Send Request" />
     </form>
 
@@ -217,6 +224,10 @@
       <input id="languageField2" type="text" name="language" />
       <label for="genre">Genre: </label>
       <input id="genreField2" type="text" name="genre" />
+      <select class="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
       <input type="submit" value="Send Request" />
     </form>
 
@@ -224,6 +235,19 @@
     <form id="bookForm" action="/getBook" method="get">
       <label for="title">Title: </label>
       <input id="titleField" type="text" name="title" />
+      <select class="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
+      <input type="submit" value="Send Request" />
+    </form>
+
+    <h3>/getAllBooks</h3>
+    <form id="allBooksForm" action="/getAllBooks" method="get">
+      <select class="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
       <input type="submit" value="Send Request" />
     </form>
 
