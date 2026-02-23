@@ -19,6 +19,7 @@ const urlStruct ={
     '/getBook': respondHandler.getBook,
     '/notReal': respondHandler.notFound,
     '/addBook': respondHandler.addBook,
+    '/rateBook': respondHandler.rateBook,
     notFound: respondHandler.notFound
 }
 

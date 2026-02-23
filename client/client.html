@@ -54,16 +54,43 @@
     }
 
     // function to send a POST request specifically to the server
-    const sendPost = async (nameForm) => {
+    const sendPost = async (form) => {
       // Grab the info from the form
-      const url = nameForm.getAttribute('action');
-      const method = nameForm.getAttribute('method');
+      const url = form.getAttribute('action');
+      const method = form.getAttribute('method');
 
-      const name = nameForm.querySelector('#nameField').value;
-      const age = nameForm.querySelector('#ageField').value;
+      // based on the form get all it's text and number input values to use for url
+      const inputs = form.querySelectorAll('input[type="text"], input[type="number"]');
+
+      // build js Object to be sent as JSON
+      let formDataObj = {};
+
+      // only member that can be an array
+      const arrayField = ['genres'];
+
+      // for each input
+      for (const input of inputs) {
+
+        // grab the value
+        const value = input.value.trim();
+
+        // if there is no value 
+        if (!value) continue;
+
+        // if the input's name is the same as the allowed arrayFields
+        if (arrayField.includes(input.name)) {
+          // create the array field splitting by commas
+          formDataObj[input.name] = value.split(',')
+            .map(value => value.trim()) // trims values with spaces after split
+            .filter(value => value.length > 0); // ensures no empty strings
+        }
+        else {
+          formDataObj[input.name] = value;
+        }
+      }
 
       // turn information to JSON by stringifying
-      const formData = JSON.stringify({ name, age });
+      const formData = JSON.stringify(formDataObj);
 
       // await fetch response sending JSON, receiving JSON, and adding
       // our form data into the body of the request
@@ -82,18 +109,18 @@
     };
 
     // function to send a request to server
-    const requestUpdate = async (userForm) => {
+    const requestUpdate = async (form) => {
 
       //Grab the URL and method described by the form
       let url;
       let method;
 
-      url = (userForm.querySelector('#urlField')) ? userForm.querySelector('#urlField').value : userForm.getAttribute('action');
+      url = (form.querySelector('#urlField')) ? form.querySelector('#urlField').value : form.getAttribute('action');
 
-      method = (userForm.querySelector('#methodSelect')) ? userForm.querySelector('#methodSelect').value : userForm.getAttribute('method');
+      method = (form.querySelector('#methodSelect')) ? form.querySelector('#methodSelect').value : form.getAttribute('method');
 
       // based on the form get all it's text input values to use for url
-      const inputs = userForm.querySelectorAll('input[type="text"]');
+      const inputs = form.querySelectorAll('input[type="text"]');
 
       // begin building a query string
       let queryParams = [];
@@ -117,32 +144,28 @@
         url += `?${queryParams.join('&')}`;
       }
 
+      // Await the fetch response using the URL and correct request method
+      // Accept headers only support JSON
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Accept': 'application/json'
+        },
+      });
 
-
-    
-
-
-    // Await the fetch response using the URL and correct request method
-    // Accept headers only support JSON
-    const response = await fetch(url, {
-      method,
-      headers: {
-        'Accept': 'application/json'
-      },
-    });
-
-    // Now that there is a response, send it into the handleResponse function
-    // second param determines whether to parse the response or not
-    handleResponse(response, method === 'get');
+      // Now that there is a response, send it into the handleResponse function
+      // second param determines whether to parse the response or not
+      handleResponse(response, method === 'get');
     }
 
     const init = () => {
       // grab the forms
       const userForm = document.querySelector('#userForm');
-      const nameForm = document.querySelector('#nameForm');
       const bookTitlesForm = document.querySelector('#bookTitlesForm');
       const booksForm = document.querySelector('#booksForm');
       const bookForm = document.querySelector('#bookForm');
+      const newBookForm = document.querySelector('#newBookForm');
+      const rateBookForm = document.querySelector('#rateBookForm');
 
       // Function to handle request for user form
       // also cancels built in html form action
@@ -153,7 +176,7 @@
       }
 
       // Function to handle request for name form
-      const addUser = (e) => {
+      const postRequest = (e) => {
         e.preventDefault();
         sendPost(e.currentTarget);
         return false;
@@ -164,9 +187,11 @@
       // Call respective functions for each form
       userForm.addEventListener('submit', getRequest);
       bookTitlesForm.addEventListener('submit', getRequest);
-      nameForm.addEventListener('submit', addUser);
       booksForm.addEventListener('submit', getRequest);
       bookForm.addEventListener('submit', getRequest);
+      newBookForm.addEventListener('submit', postRequest);
+      rateBookForm.addEventListener('submit', postRequest);
+
     };
 
     window.onload = init;
@@ -176,13 +201,7 @@
 <body>
   <section id="top">
     <h3>Books API Tests</h3>
-    <form id="nameForm" action="/addUser" method="post">
-      <label for="name">Name: </label>
-      <input id="nameField" type="text" name="name" />
-      <label for="age">Age: </label>
-      <input id="ageField" type="number" name="age" min="0" max="100" step="1" />
-      <input type="submit" value="Add User" />
-    </form>
+
     <form id="userForm" action="/getUsers" method="get">
       <select id='urlField'>
         <option value='/getBookTitles'>/getBookTitles</option>
@@ -224,6 +243,34 @@
       <label for="title">Title: </label>
       <input id="titleField" type="text" name="title" />
       <input type="submit" value="Send Request" />
+    </form>
+
+    <h3>/addBook</h3>
+    <form id="newBookForm" action="/addBook" method="post">
+      <label for="author">Author: </label>
+      <input id="authorField" type="text" name="author" />
+      <label for="country">Country: </label>
+      <input id="countryField2" type="text" name="country" />
+      <label for="language">Language: </label>
+      <input id="languageField3" type="text" name="language" />
+      <label for="pages">Pages: </label>
+      <input id="pagesField" type="number" name="pages" />
+      <label for="title">Title: </label>
+      <input id="titleField2" type="text" name="title" />
+      <label for="year">Year: </label>
+      <input id="yearField" type="number" name="year" />
+      <label for="genres">Genres: </label>
+      <input id="genresField" type="text" name="genres" />
+      <input type="submit" value="Add Book" />
+    </form>
+
+    <h3>/rateBook</h3>
+    <form id="rateBookForm" action="/rateBook" method="post">
+      <label for="title">Title: </label>
+      <input id="titleField3" type="text" name="title" />
+      <label for="rating">Rating: </label>
+      <input id="yearField" type="number" name="rating" min="0" max="10" />
+      <input type="submit" value="Rate Book" />
     </form>
   </section>
   <section id="content">

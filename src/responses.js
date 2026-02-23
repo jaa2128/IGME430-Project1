@@ -11,9 +11,21 @@ const responses = {
     'created': {
         message: 'Created Successfully'
     },
-    'badRequest': {
+    'bookMissingTitle': {
         message: 'Missing title query param',
         id: 'getBookMissingParams'
+    },
+    'addBookMissingParams':{
+        message: 'Author, Country, Language, Pages, Title, Year, and Genres params are all required',
+        id: 'addBookMissingParams'
+    },
+    'rateBookMisingParams':{
+        message: 'Title and rating body parameters are both required',
+        id: 'rateBookMissingParams'
+    },
+    'noBookToRate': {
+        message: 'No book with title',
+        id: 'noBookToRate'
     }
 };
 
@@ -69,7 +81,7 @@ const getBookTitles = (request, response) => {
         booksCopy = booksCopy.filter(book => {
 
             // First check if the book has any genres
-            if(!book.genres){
+            if (!book.genres) {
                 return;
             }
 
@@ -80,7 +92,7 @@ const getBookTitles = (request, response) => {
             // Split by spaces to allow Partial Responses i.e. "Magical Realism" and "Realism"
             // Then .toLowerCase to have a clean input comparison 
             // Then .flat() to add elements in any sub arrays in the split to the full array
-            bookGenres = bookGenres.map(genre => genre.toLowerCase().split(' ')).flat(); 
+            bookGenres = bookGenres.map(genre => genre.toLowerCase().split(' ')).flat();
 
             // If the array of strings has an element that matches the query return the book
             return bookGenres.includes(request.query.genre);
@@ -96,6 +108,7 @@ const getBookTitles = (request, response) => {
 
 }
 
+// Function to get books based off filtered params
 const getBooks = (request, response) => {
     // Have a copy of the Books data set to filter through
     let booksCopy = books;
@@ -134,7 +147,7 @@ const getBooks = (request, response) => {
         booksCopy = booksCopy.filter(book => {
 
             // First check if the book has any genres
-            if(!book.genres){
+            if (!book.genres) {
                 return;
             }
 
@@ -145,7 +158,7 @@ const getBooks = (request, response) => {
             // Split by spaces to allow Partial Responses i.e. "Magical Realism" and "Realism"
             // Then .toLowerCase to have a clean input comparison 
             // Then .flat() to add elements in any sub arrays in the split to the full array
-            bookGenres = bookGenres.map(genre => genre.toLowerCase().split(' ')).flat(); 
+            bookGenres = bookGenres.map(genre => genre.toLowerCase().split(' ')).flat();
 
             // If the array of strings has an element that matches the query return the book
             return bookGenres.includes(request.query.genre);
@@ -155,75 +168,107 @@ const getBooks = (request, response) => {
     return respondJSON(request, response, 200, booksCopy);
 }
 
+// Function to find Book based off title
 const getBook = (request, response) => {
-    // TODO: send back book based on title, 400 status if no title is provided
 
     // If there is no query, send back 400 bad request
-    if(!request.query.title){
-        return respondJSON(request, response, 400, responses['badRequest'])
+    if (!request.query.title) {
+        return respondJSON(request, response, 400, responses['bookMissingTitle'])
     }
 
     // search array for the book with the respective title
     const book = books.find(book => book.title.toLowerCase() === request.query.title);
 
     // if it was found return a response
-    if(book){
+    if (book) {
         return respondJSON(request, response, 200, book);
     }
-    
+
     return respondJSON(request, response, 404, responses['notFound']);
 }
 
+// Function to an unfound page
 const notFound = (request, response) => {
     respondJSON(request, response, 404, responses['notFound']);
 }
 
-// TODO: change following function to add Books to the Books data set
-// TODO: must include following params: author, country, language, pages, title, year, and genres
+// Function to add and update book dataset
 const addBook = (request, response) => {
-    let isNewUserCreated = false;
 
     // use JS destructing to easily grab request's body
-    const { name, age } = request.body;
+    const { author, country, language, pages, title, year, genres } = request.body;
 
-    // make sure that both fields exist otherwise send proper response
-    if (!name || !age) {
-        return respondJSON(request, response, 400, responses['badRequest']);
+    // make sure that all fields exist otherwise send proper response
+    if (!author || !country || !language || !pages || !title || !year || !genres) {
+        return respondJSON(request, response, 400, responses['bookMissingTitle']);
     }
 
-    // check if the user exists, if it doesn't, create new user
-    if (!books[name]) {
+    // check if the book exists by the title, if it doesn't, create A new Book
+    // search array for the book with the respective title
+    const book = books.find(book => book.title.toLowerCase() === title.toLowerCase());
 
-        books[name] = {
-            name: name,
-        };
-
-        // new user is created
-        isNewUserCreated = true;
+    // If it exists update all its fields then respond with 204
+    if (book) {
+        book.author = author;
+        book.country = country;
+        book.language = language;
+        book.pages = pages;
+        book.year = year;
+        book.genres = genres;
+        // If the book existed and was updated, send 204 response with no body
+        return respondJSON(request, response, 204, {});
     }
 
-    // add or update age for this user name
-    books[name].age = age;
-
-    // If a new user was created send 201 response
-    if (isNewUserCreated) {
-        return respondJSON(request, response, 201, responses['created']);
+    // Otherwise build the new book and add it to the dataset
+    const newBook = {
+        "author": author,
+        "country": country,
+        "language": language,
+        "pages": pages,
+        "title": title,
+        "year": year,
+        "genres": genres,
     }
 
-    // If the user existed and was updated, send 204 response with no body
-    return respondJSON(request, response, 204, {});
+    books.push(newBook);
+
+    // If a new book was created send 201 response
+    return respondJSON(request, response, 201, newBook);
 }
 
+// Function to rate an existing book in the dataset
+const rateBook = (request, response) => {
 
-// const rateBook = (request, response) => {
-//     // TODO: update an existing book to have a rating based off request
-// }
+    // get the title of the book based off the request body
+    const{title, rating} = request.body;
+
+    // if there is no rating send 400
+    if(!rating || !title){
+        return respondJSON(request, response, 400, responses['rateBookMisingParams']);
+    }
+
+    // find the book based off the title
+    const book = books.find(book => book.title.toLowerCase() === title.toLowerCase());
+
+    // if it doesn't exist, send 400
+    if(!book){
+        return respondJSON(request, response, 400, responses['noBookToRate']);
+    }
+
+    
+
+    // if there's both, simply update the book with the rating
+    book.rating = rating;
+
+    return respondJSON(request, response, 200, book);
+
+}
 
 module.exports = {
     getBookTitles,
     getBooks,
     getBook,
-    //rateBook,
+    rateBook,
     getallBooks,
     notFound,
     addBook
