@@ -15,6 +15,8 @@ const urlStruct ={
     '/style.css': htmlHandler.getCss,
     '/getAllBooks': respondHandler.getallBooks,
     '/getBookTitles': respondHandler.getBookTitles,
+    '/getBooks': respondHandler.getBooks,
+    '/getBook': respondHandler.getBook,
     '/notReal': respondHandler.notFound,
     '/addBook': respondHandler.addBook,
     notFound: respondHandler.notFound
@@ -77,6 +79,8 @@ const onRequest = (request, response) => {
     const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
 
     const handler = urlStruct[parsedUrl.pathname];
+
+    request.query = Object.fromEntries(parsedUrl.searchParams);
 
     // first check if this is a POST request AND if there's a handler
     // method for the url, if it is, parse the body 

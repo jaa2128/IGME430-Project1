@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./src/server.js",
     "pretest": "eslint ./src --fix",
-    "nodemon": "nodemon -e js,html,css --watch ./src",
+    "nodemon": "nodemon -e js,html,css --watch ./src --watch ./client",
     "test": "echo \"No Tests\""
   },
   "author": "Julian Alvia",
