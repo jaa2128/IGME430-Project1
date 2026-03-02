@@ -4,8 +4,13 @@
 <head>
   <title>Our simple HTTP server</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
+  <link rel="stylesheet" type="text/css" href="/bookshelf.css">
+  <script src="/cssUtils.js" type="module"></script>
+  <script src="/bookshelf.js" type="module"></script>
 
-  <script>
+
+  <script type="module">
+    import { styleBookshelf } from "/bookshelf.js";
 
     // function to handle responses sent back by the server
     const handleResponse = async (response, parseResponse) => {
@@ -45,13 +50,146 @@
         }
         else {
           // stringify JSON to display
-          content.innerHTML += `<p>${JSON.stringify(obj)}</p>`;
+          //content.innerHTML += `<p>${JSON.stringify(obj)}</p>`;
+
+          // create a bookshelf
+          content.innerHTML += ` <div class="bookshelf"></div>`;
+
+          // grab the bookshelf that was just created
+          let bookshelf = content.querySelector('.bookshelf');
+
+          // convert the object into an array to work with titles, and single objects
+          // that come from post requests
+
+          let books;
+
+          // if the object is indeed an array of multiple objects
+          if (Array.isArray(obj)) {
+            books = obj; // books is now that array
+          }
+          // if not
+          else {
+            books = [obj]; // create array only containing the object
+          }
+          // for each book in books
+          for (let i = 0; i < books.length; i++) {
+
+            // Determine title and initials
+            let title;
+
+            // empty string if were only dealing with titles
+            // such as with /getTitles
+            let initials = "";
+
+            // other book fields to potentially fill
+            let country;
+            let language;
+            let pages;
+            let year;
+            let author;
+            let genres;
+            let rating;
+            let wikiLink;
+
+            // if the array elements are only strings set title to string
+            if (typeof books[i] === "string") {
+              title = books[i];
+            }
+
+            // if array elements are objects
+            else {
+              title = books[i].title;
+
+              // fill in appropriate fields ternary operations to check 
+              // if certain fields exist
+              country = books[i].country ? books[i].country : '';
+              language = books[i].language ? books[i].language : '';
+              pages = books[i].pages ? books[i].pages : '';
+              year = books[i].year ? books[i].year : '';
+              author = books[i].author ? books[i].author : '';
+              genres = books[i].genres ? books[i].genres : '';
+              rating = books[i].rating ? books[i].rating : '';
+              wikiLink = books[i].link ? books[i].link : '';
+
+              // if author is Unknown use ?
+              if (books[i].author === "Unknown") {
+                initials = '?';
+              }
+
+              // Otherwise get first and last initial
+              else {
+                const name = books[i].author.split(' ');
+
+                initials = name[0][0].toUpperCase() // first latter of first name
+                  + name[name.length - 1][0].toUpperCase(); // first letter of last name
+              }
+
+            }
+
+            // if there's a rating
+            if (rating) {
+              // add a book to the bookshelf with a rating
+              bookshelf.innerHTML += `<div class="book">
+                                    <div class="side spine">
+                                      <span class="spine-title"> ${title} </span>
+                                      <span class="spine-author"> ${initials} </span>
+                                    </div>
+                                    <div class="side top"></div>
+                                    <div class="side cover">
+                                    Country: ${country}\n
+                                    Language: ${language}\n
+                                    Pages: ${pages}\n
+                                    Year: ${year}\n
+                                    Author: ${author}\n
+                                    Genres: ${genres}\n
+                                    Rating: ${rating}
+                                    </div>
+                                  </div>`;
+            }
+            // if there are no other fields besides the title
+            else if (!country && !language && !pages && !year && !author && !genres) {
+              // Simply return only books with titles
+              bookshelf.innerHTML += `<div class="book">
+                                    <div class="side spine">
+                                      <span class="spine-title"> ${title} </span>
+                                      <span class="spine-author"> ${initials} </span>
+                                    </div>
+                                    <div class="side top"></div>
+                                    <div class="side cover">
+                                    </div>
+                                  </div>`;
+            }
+            else {
+              // add a book to the bookshelf
+              bookshelf.innerHTML += `<div class="book">
+                                    <div class="side spine">
+                                      <span class="spine-title"> ${title} </span>
+                                      <span class="spine-author"> ${initials} </span>
+                                    </div>
+                                    <div class="side top"></div>
+                                    <div class="side cover">
+                                    Country: ${country}\n
+                                    Language: ${language}\n
+                                    Pages: ${pages}\n
+                                    Year: ${year}\n
+                                    Author: ${author}\n
+                                    Genres: ${genres}
+                                    </div>
+                                  </div>`;
+            }
+
+          }
+          // style bookshelf
+          styleBookshelf(bookshelf);
+
+          console.log(obj);
         }
 
-        console.log(obj);
-
       }
+
+
     }
+
 
     // function to send a POST request specifically to the server
     const sendPost = async (form) => {
@@ -79,7 +217,7 @@
 
         // if the input's name is the same as the allowed arrayFields
         if (arrayField.includes(input.name)) {
-          
+
           // create the array field splitting by commas
           formDataObj[input.name] = value.split(',')
             .map(value => value.trim()) // trims values with spaces after split
@@ -116,7 +254,7 @@
       let url;
       let method;
 
-      url = (form.querySelector('#urlField')) ? form.querySelector('#urlField').value : form.getAttribute('action');
+      url = form.getAttribute('action');
 
       method = form.querySelector('.methodSelect').value;
 
@@ -159,7 +297,32 @@
       handleResponse(response, method === 'get');
     }
 
+    const setupUI = () => {
+      // grab all the endpoint elements
+      const endpoints = document.querySelectorAll('.endpoint');
+
+      // for all the headers add a toggleable 'open' class
+      // also close all other sections 
+      endpoints.forEach(endpoint => {
+
+        // When the user clicks the end point
+        endpoint.addEventListener('click', () => {
+
+          console.log('something');
+
+          // look through the document for all other endpoints
+          // and 'close' them by removing the 'open' class
+          document.querySelectorAll('.endpoint').forEach(e => e.classList.remove('open'));
+
+          // then 'open' this endpoint form
+          endpoint.classList.add('open');
+        })
+      })
+    }
+
     const init = () => {
+      setupUI();
+
       // grab the forms
       const bookTitlesForm = document.querySelector('#bookTitlesForm');
       const booksForm = document.querySelector('#booksForm');
@@ -184,7 +347,6 @@
       }
 
 
-
       // Call respective functions for each form
       bookTitlesForm.addEventListener('submit', getRequest);
       booksForm.addEventListener('submit', getRequest);
@@ -200,87 +362,120 @@
 </head>
 
 <body>
-  <section id="top">
-    <h3>Books API Tests</h3>
+  <div id="container">
+    <section id="endpoints">
+      <h3>Books API Tests</h3>
 
-    <h3>/getBookTitles</h3>
-    <form id="bookTitlesForm" action="/getBookTitles" method="get">
-      <label for="language">Language: </label>
-      <input id="languageField" type="text" name="language" />
-      <label for="genre">Genre: </label>
-      <input id="genreField" type="text" name="genre" />
-      <select class="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
-      </select>
-      <input type="submit" value="Send Request" />
-    </form>
+      <div class="endpoint">
+        <h3 class="endpoint-header">/getBookTitles</h3>
+        <div class="endpoint-body">
+          <form id="bookTitlesForm" action="/getBookTitles" method="get">
+            <label for="language">Language: </label>
+            <input id="languageField" type="text" name="language" />
+            <label for="genre">Genre: </label>
+            <input id="genreField" type="text" name="genre" />
+            <select class="methodSelect">
+              <option value="get">GET</option>
+              <option value="head">HEAD</option>
+            </select>
+            <input type="submit" value="Send Request" />
+          </form>
+        </div>
+      </div>
 
-    <h3>/getBooks</h3>
-    <form id="booksForm" action="/getBooks" method="get">
-      <label for="country">Country: </label>
-      <input id="countryField" type="text" name="country" />
-      <label for="language">Language: </label>
-      <input id="languageField2" type="text" name="language" />
-      <label for="genre">Genre: </label>
-      <input id="genreField2" type="text" name="genre" />
-      <select class="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
-      </select>
-      <input type="submit" value="Send Request" />
-    </form>
+      <div class="endpoint">
+        <h3 class="endpoint-header">/getBooks</h3>
+        <div class="endpoint-body">
+          <form id="booksForm" action="/getBooks" method="get">
+            <label for="country">Country: </label>
+            <input id="countryField" type="text" name="country" />
+            <label for="language">Language: </label>
+            <input id="languageField2" type="text" name="language" />
+            <label for="genre">Genre: </label>
+            <input id="genreField2" type="text" name="genre" />
+            <select class="methodSelect">
+              <option value="get">GET</option>
+              <option value="head">HEAD</option>
+            </select>
+            <input type="submit" value="Send Request" />
+          </form>
+        </div>
+      </div>
 
-    <h3>/getBook</h3>
-    <form id="bookForm" action="/getBook" method="get">
-      <label for="title">Title: </label>
-      <input id="titleField" type="text" name="title" />
-      <select class="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
-      </select>
-      <input type="submit" value="Send Request" />
-    </form>
+      <div class="endpoint">
+        <h3 class="endpoint-header">/getBook</h3>
+        <div class="endpoint-body">
+          <form id="bookForm" action="/getBook" method="get">
+            <label for="title">Title: </label>
+            <input id="titleField" type="text" name="title" />
+            <select class="methodSelect">
+              <option value="get">GET</option>
+              <option value="head">HEAD</option>
+            </select>
+            <input type="submit" value="Send Request" />
+          </form>
+        </div>
+      </div>
 
-    <h3>/getAllBooks</h3>
-    <form id="allBooksForm" action="/getAllBooks" method="get">
-      <select class="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
-      </select>
-      <input type="submit" value="Send Request" />
-    </form>
+      <div class="endpoint">
+        <h3 class="endpoint-header">/getAllBooks</h3>
+        <div class="endpoint-body">
+          <form id="allBooksForm" action="/getAllBooks" method="get">
+            <select class="methodSelect">
+              <option value="get">GET</option>
+              <option value="head">HEAD</option>
+            </select>
+            <input type="submit" value="Send Request" />
+          </form>
+        </div>
+      </div>
 
-    <h3>/addBook</h3>
-    <form id="newBookForm" action="/addBook" method="post">
-      <label for="author">Author: </label>
-      <input id="authorField" type="text" name="author" />
-      <label for="country">Country: </label>
-      <input id="countryField2" type="text" name="country" />
-      <label for="language">Language: </label>
-      <input id="languageField3" type="text" name="language" />
-      <label for="pages">Pages: </label>
-      <input id="pagesField" type="number" name="pages" />
-      <label for="title">Title: </label>
-      <input id="titleField2" type="text" name="title" />
-      <label for="year">Year: </label>
-      <input id="yearField" type="number" name="year" />
-      <label for="genres">Genres: </label>
-      <input id="genresField" type="text" name="genres" />
-      <input type="submit" value="Add Book" />
-    </form>
+      <div class="endpoint">
+        <h3 class="endpoint-header">/addBook</h3>
+        <div class="endpoint-body">
+          <form id="newBookForm" action="/addBook" method="post">
+            <label for="author">Author: </label>
+            <input id="authorField" type="text" name="author" />
+            <label for="country">Country: </label>
+            <input id="countryField2" type="text" name="country" />
+            <label for="language">Language: </label>
+            <input id="languageField3" type="text" name="language" />
+            <label for="pages">Pages: </label>
+            <input id="pagesField" type="number" name="pages" />
+            <label for="title">Title: </label>
+            <input id="titleField2" type="text" name="title" />
+            <label for="year">Year: </label>
+            <input id="yearField" type="number" name="year" />
+            <label for="genres">Genres: </label>
+            <input id="genresField" type="text" name="genres" />
+            <input type="submit" value="Add Book" />
+          </form>
+        </div>
+      </div>
 
-    <h3>/rateBook</h3>
-    <form id="rateBookForm" action="/rateBook" method="post">
-      <label for="title">Title: </label>
-      <input id="titleField3" type="text" name="title" />
-      <label for="rating">Rating: </label>
-      <input id="yearField" type="number" name="rating" min="0" max="10" />
-      <input type="submit" value="Rate Book" />
-    </form>
-  </section>
-  <section id="content">
-  </section>
+      <div class="endpoint">
+        <h3 class="endpoint-header">/rateBook</h3>
+        <div class="endpoint-body">
+          <form id="rateBookForm" action="/rateBook" method="post">
+            <label for="title">Title: </label>
+            <input id="titleField3" type="text" name="title" />
+            <label for="rating">Rating: </label>
+            <input id="yearField" type="number" name="rating" min="0" max="10" />
+            <input type="submit" value="Rate Book" />
+          </form>
+        </div>
+      </div>
+
+      
+
+
+
+
+    </section>
+    <section id="content">
+    </section>
+  </div>
+
 </body>
 
 </html>

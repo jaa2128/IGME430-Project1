@@ -195,7 +195,7 @@ const addBook = (request, response) => {
 
     // make sure that all fields exist otherwise send proper response
     if (!author || !country || !language || !pages || !title || !year || !genres) {
-        return respondJSON(request, response, 400, responses['bookMissingTitle']);
+        return respondJSON(request, response, 400, responses['addBookMissingParams']);
     }
 
     // check if the book exists by the title, if it doesn't, create A new Book

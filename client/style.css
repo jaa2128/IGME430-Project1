@@ -5,17 +5,66 @@ html, body {
   padding: 0;
 }
 
-#top {
-  text-align: center;
-  margin: 0 auto;
+#container {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  padding: 20px;
 }
 
-#top h1 {
+#endpoints {
+  text-align: center;
+  margin-right: 20px;
+  flex: 1;
+  max-width: 800px;
+}
+
+
+#endpoints h1 {
   font-size: 2em;
+}
+
+#endpoints h3{
+    max-width: 800px;
 }
 
 #content {
-  margin-top: 100px;
-  font-size: 2em;
+  flex: 1;
   text-align: center;
+  font-size: 1.5em;
+  margin-top: 2em;
+}
+
+.endpoint{
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  width: 800px;
+}
+
+.endpoint-header{
+  background-color: #f4f4f4;
+  padding: 10px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.endpoint-body{
+  display: none;
+  padding: 15px;
+}
+
+.endpoint.open .endpoint-body {
+  display:block;
+}
+
+form{
+  text-align: left;
+  display: block;
+}
+
+form > input, select{
+  text-align: left;
+  display: block;
+  margin-bottom: 10px;
 }

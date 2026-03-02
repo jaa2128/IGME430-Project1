@@ -20,6 +20,9 @@ const urlStruct ={
     '/notReal': respondHandler.notFound,
     '/addBook': respondHandler.addBook,
     '/rateBook': respondHandler.rateBook,
+    '/bookshelf.css': htmlHandler.getBookCss,
+    '/bookshelf.js': htmlHandler.getBookJs,
+    '/cssUtils.js': htmlHandler.getCssUtils,
     notFound: respondHandler.notFound
 }
 
