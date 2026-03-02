@@ -1,3 +1,5 @@
+// CREDIT: Taken from iwishiwasaneagle virtual-bookshelf repo linked here: https://github.com/iwishiwasaneagle/virtual-bookshelf/tree/main
+
 export function getRootCssStyles(rootRule = ":root") {
     // Get all CSS rules for the document using Array methods
     const cssRulesArray = [...document.styleSheets]

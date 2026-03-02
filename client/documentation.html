@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Books API Documentation</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <link rel="stylesheet" type="text/css" href="/bookshelf.css">
+    <script src="/cssUtils.js" type="module"></script>
+    <script src="/bookshelf.js" type="module"></script>
+
+
+    <script type="module">
+
+        const setupUI = () => {
+            // grab all the endpoint elements
+            const endpoints = document.querySelectorAll('.endpoint');
+
+            // for all the headers add a toggleable 'open' class
+            // also close all other sections 
+            endpoints.forEach(endpoint => {
+
+                // When the user clicks the end point
+                endpoint.addEventListener('click', () => {
+
+                    console.log('something');
+
+                    // look through the document for all other endpoints
+                    // and 'close' them by removing the 'open' class
+                    document.querySelectorAll('.endpoint').forEach(e => e.classList.remove('open'));
+
+                    // then 'open' this endpoint form
+                    endpoint.classList.add('open');
+                })
+            })
+        }
+
+        const init = () => {
+            setupUI();
+        };
+
+        window.onload = init;
+    </script>
+</head>
+
+<body>
+    <div id="container">
+        <section id="endpoints">
+            <h3>Books API Documentation</h3>
+
+            <div class="endpoint">
+                <h3 class="endpoint-header">/getBookTitles Documentation</h3>
+                <div class="endpoint-body">
+                    <h4>Supported Methods:</h4>
+                    <p class="paramater">
+                        <code>GET</code>
+                        <code>HEAD</code>
+                    </p>
+                    <h4>Query Params:</h4>
+                    <p class="paramater">
+                        <code>language</code> (optional) - A language to filter by
+                    </p>
+                    <p class="parameter">
+                        <code>genre</code> (optional) - A genre to filter by (partial matching supported i.e Fiction ->
+                        Historical Fiction, Classical Fiction, etc.)
+                    </p>
+                    <h4>Returns:</h4>
+                    <p class="paramater">
+                        A JSON array of book name strings.<br>
+                         Format: <code>[string]</code>
+                    </p>
+                    <h4>Examples:</h4>
+                    <section class="examples">
+                        <p>Request: <code>/getBookTitles</code></p>
+                        <p>Result: <code>["title1", "title2", "title3"]</code></p>
+                    </section>
+                    <hr>
+                    <section class="examples">
+                        <p>Request: <code>/getBookTitles?language=title1and3language</code></p>
+                        <p>Result: <code>["title1", "title3"]</code></p>
+                    </section>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <h3 class="endpoint-header">/getBooks Documentation</h3>
+                <div class="endpoint-body">
+                    <h4>Supported Methods:</h4>
+                    <p class="paramater">
+                        <code>GET</code>
+                        <code>HEAD</code>
+                    </p>
+                    <h4>Query Params:</h4>
+                    <p class="paramater">
+                        <code>country</code> (optional) - A country of origin to filter by.
+                    </p>
+                    <p class="parameter">
+                        <code>language</code> (optional) - A language to filter by.
+                    </p>
+                    <p class="parameter">
+                        <code>genre</code> (optional) - A genre to filter by (partial matching supported i.e Fiction ->
+                        Historical Fiction, Classical Fiction, etc.).
+                    </p>
+                    <h4>Returns:</h4>
+                     <p class="paramater">
+                        A JSON array of book objects. <br> 
+                        Format: <code>[{author: string, country: string, language: string, link?: string, pages: number, title: string, year: number, genres?: [string], rating?: number}]</code>
+                    </p>
+                    <h4>Examples:</h4>
+                     <section class="examples">
+                        <p>Request: <code>/getBooks?language=Icelandic</code></p>
+                        <p>Result: <code>author: "Halldor Laxness", country: "Iceland", language: "Icelandic", link: "https://en.wikipedia.org/wiki/Independent_People\n", pages: 470, title: "Independent People", year: 1934</code></p>
+                    </section>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <h3 class="endpoint-header">/getBook Documentation</h3>
+                <div class="endpoint-body">
+                    <h4>Supported Methods:</h4>
+                    <p class="paramater">
+                        <code>GET</code>
+                        <code>HEAD</code>
+                    </p>
+                    <h4>Query Params:</h4>
+                    <p class="paramater">
+                        <code>title</code> - The title of the book.
+                    </p>
+                    <h4>Returns:</h4>
+                    <p class="paramater">
+                        A JSON book object.<br> Format: <code>{author: string, country: string, language: string, link?: string, pages: number, title: string, year: number, genres?: [string], rating?: number}</code>
+                    </p>
+                    <h4>Examples:</h4>
+                     <section class="examples">
+                        <p>Request: <code>/getBook?title=Independent People</code></p>
+                        <p>Result: <code>author: "Halldor Laxness", country: "Iceland", language: "Icelandic", link: "https://en.wikipedia.org/wiki/Independent_People\n", pages: 470, title: "Independent People", year: 1934</code></p>
+                    </section>
+                    <hr>
+                    <section class="examples">
+                        <p>Request: <code>/getBook</code></p>
+                        <p>Result: <code>400 Error</code></p>
+                    </section>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <h3 class="endpoint-header">/getAllBooks Documentation</h3>
+                <div class="endpoint-body">
+                    <h4>Supported Methods:</h4>
+                    <p class="paramater">
+                        <code>GET</code>
+                        <code>HEAD</code>
+                    </p>
+                    <h4>Query Params:</h4>
+                    <p class="parameter">
+                        No supported parameters
+                    </p>
+                    <h4>Returns:</h4>
+                     <p class="paramater">
+                        A JSON array of book objects. <br> 
+                        Format: <code>[{author: string, country: string, language: string, link?: string, pages: number, title: string, year: number, genres?: [string], rating?: number}]</code>
+                    </p>
+                    <h4>Examples:</h4>
+                     <section class="examples">
+                        <p>Request: <code>/getAllBooks</code></p>
+                        <p>Result: <code>[{"author": "Chinua Achebe", "country": "Nigeria", "language": "English", "link": "https://en.wikipedia.org/wiki/Things_Fall_Apart\n", "pages": 209, "title": "Things Fall Apart", "year": 1958,"genres": ["Historical Fiction", "Postcolonial Literature"]}, ...]</code></p>
+                    </section>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <h3 class="endpoint-header">/addBook Documentation</h3>
+                <div class="endpoint-body">
+                    <h4>Supported Methods:</h4>
+                    <p class="paramater">
+                        <code>POST</code>
+                    </p>
+                     <h4>Supported Body Formats:</h4>
+                    <p class="paramater">
+                        <code>application/json</code>
+                        <code>application/x-www-form-urlencoded</code>
+                    </p>
+                    <h4>Body Params:</h4>
+                    <p class="paramater">
+                        <code>author</code> Type: <code>string</code> - The book's author
+                    </p>
+                    <p class="paramater">
+                        <code>country</code> Type: <code>string</code> - The book's country of origin
+                    </p>
+                    <p class="parameter">
+                        <code>language</code> Type: <code>string</code> - The book's language
+                    </p>
+                    <p class="parameter">
+                        <code>pages</code> Type: <code>number</code> - The book's number of pages
+                    </p>
+                    <p class="paramater">
+                       <code>title</code> Type: <code>string</code> - The book's title
+                    </p>
+                    <p class="parameter">
+                        <code>year</code> Type: <code>number</code> - The book's publication year
+                    </p>
+                    <p class="parameter">
+                        <code>genres</code> Type: <code>string</code> - A comma separated string of the book's genres
+                    </p>
+                    <h4>Returns:</h4>
+                    <p class="paramater">
+                        A JSON book object representing the new or updated book<br> 
+                        Format: <code>[{author: string, country: string, language: string, link: string, pages: number, title: string, year: number, genres?: [string], rating?: number}]</code>
+                    </p>
+                    <h4>Examples:</h4>
+                    <section class="examples">
+                        <p>Request: <code>/addBook</code></p>
+                        <p>Body: <code>{author: 'Author1', country: 'United States', language: 'English', pages: '200', title: 'Title1', year: 2001, genres: 'genre1,genre2' } author</code></p>
+                        <p>Result: <code>{"author": "Author1", "country": "United States", "language": "English", "pages": 200, "title": "Title1", "year": 2001, "genres": ["genre1", "genre2"]}</code></p>
+                    </section>
+                    <hr>
+                    <section class="examples">
+                        <p>Request: <code>/addBook</code></p>
+                        <p>Body: <code>{author: 'Author1', language: 'English'} author</code></p>
+                        <p>Result: <code>400 Error (Missing Params)</code></p>
+                    </section>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <h3 class="endpoint-header">/rateBook Documentation</h3>
+                <div class="endpoint-body">
+                    <h4>Supported Methods:</h4>
+                    <p class="paramater">
+                        <code>POST</code>
+                    </p>
+                    <h4>Supported Body Formats:</h4>
+                    <p class="paramater">
+                        <code>application/json</code>
+                        <code>application/x-www-form-urlencoded</code>
+                    </p>
+                    <h4>Body Params:</h4>
+                     <p class="parameter">
+                        <code>title</code> Type: <code>string</code> - The book's title
+                    </p>
+                    <p class="parameter">
+                        <code>rating</code> Type: <code>number</code> - The rating of the book
+                    </p>
+                    <h4>Returns:</h4>
+                    <p class="paramater">
+                        A JSON book object representing the updated book, or a 404 if no book exists with that title<br> 
+                        Format: <code>{author: string, country: string, language: string, link?: string, pages: number, title: string, year: number, genres?: [string], rating: number}</code>
+                    </p>
+                    <h4>Examples:</h4>
+                    <section class="examples">
+                        <p>Request: <code>/rateBook</code></p>
+                        <p>Body: <code>{title: 'Title1', rating: 3}</code></p>
+                        <p>Result: <code>{"author": "Author1", "country": "United States", "language": "English", "pages": 200, "title": "Title1", "year": 2001, "genres": ["genre1", "genre2"], rating: 3}</code></p>
+                    </section>
+                    <hr>
+                    <section class="examples">
+                        <p>Request: <code>/rateBook</code></p>
+                        <p>Body: <code>{title: 'Title1'}</code></p>
+                        <p>Result: <code>400 Error (Missing Params)</code></p>
+                    </section>
+                    <hr>
+                      <section class="examples">
+                        <p>Request: <code>/rateBook</code></p>
+                        <p>Body: <code>{title: 'FakeBook', rating: 5}</code></p>
+                        <p>Result: <code>404 Error (No Book to Rate)</code></p>
+                    </section>
+                </div>
+            </div>
+
+            <!-- hyperlinks -->
+            <a href="/documentation.html">View Documentation</a>
+            <br>
+            <a href="/">Test API</a>
+
+
+
+        </section>
+    </div>
+
+</body>
+
+</html>

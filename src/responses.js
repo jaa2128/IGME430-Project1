@@ -247,7 +247,7 @@ const rateBook = (request, response) => {
 
     // if it doesn't exist, send 400
     if (!book) {
-        return respondJSON(request, response, 400, responses['noBookToRate']);
+        return respondJSON(request, response, 404, responses['noBookToRate']);
     }
 
 

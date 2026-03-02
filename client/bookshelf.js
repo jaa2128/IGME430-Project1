@@ -1,3 +1,4 @@
+// CREDIT: Taken from iwishiwasaneagle virtual-bookshelf repo linked here: https://github.com/iwishiwasaneagle/virtual-bookshelf/tree/main
 // NOTE: Slightly modified from original source code to work for my particular application of
 // the source code
 import { getRootCssStyles } from './cssUtils.js';

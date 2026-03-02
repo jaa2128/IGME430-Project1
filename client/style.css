@@ -28,6 +28,30 @@ html, body {
     max-width: 800px;
 }
 
+#endpoints h4 {
+  text-align: left;
+}
+
+#endpoints p {
+  text-align: left;
+
+}
+
+.param{
+  margin-left: 20px;
+}
+
+section.examples{
+  border-color: #333;
+  border: 3px;
+  display: block;
+}
+
+code{
+  background-color: #333;
+  color: #f4f4f4;
+  padding: 2px;
+}
 #content {
   flex: 1;
   text-align: center;

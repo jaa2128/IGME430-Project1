@@ -23,6 +23,7 @@ const urlStruct ={
     '/bookshelf.css': htmlHandler.getBookCss,
     '/bookshelf.js': htmlHandler.getBookJs,
     '/cssUtils.js': htmlHandler.getCssUtils,
+    '/documentation.html': htmlHandler.getDocumentation,
     notFound: respondHandler.notFound
 }
 

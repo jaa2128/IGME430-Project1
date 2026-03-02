@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Our simple HTTP server</title>
+  <title>Books API Test</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
   <link rel="stylesheet" type="text/css" href="/bookshelf.css">
   <script src="/cssUtils.js" type="module"></script>
@@ -49,8 +49,6 @@
           content.innerHTML += `<p>Message: ${obj.message}</p>`;
         }
         else {
-          // stringify JSON to display
-          //content.innerHTML += `<p>${JSON.stringify(obj)}</p>`;
 
           // create a bookshelf
           content.innerHTML += ` <div class="bookshelf"></div>`;
@@ -59,7 +57,7 @@
           let bookshelf = content.querySelector('.bookshelf');
 
           // convert the object into an array to work with titles, and single objects
-          // that come from post requests
+          // that may come from post requests
 
           let books;
 
@@ -89,7 +87,6 @@
             let author;
             let genres;
             let rating;
-            let wikiLink;
 
             // if the array elements are only strings set title to string
             if (typeof books[i] === "string") {
@@ -109,7 +106,6 @@
               author = books[i].author ? books[i].author : '';
               genres = books[i].genres ? books[i].genres : '';
               rating = books[i].rating ? books[i].rating : '';
-              wikiLink = books[i].link ? books[i].link : '';
 
               // if author is Unknown use ?
               if (books[i].author === "Unknown") {
@@ -189,7 +185,6 @@
 
 
     }
-
 
     // function to send a POST request specifically to the server
     const sendPost = async (form) => {
@@ -466,8 +461,10 @@
         </div>
       </div>
 
-      
-
+      <!-- hyperlinks -->
+      <a href="/documentation.html">View Documentation</a>
+      <br>
+      <a href="/">Test API</a>
 
 
 
